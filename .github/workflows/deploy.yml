@@ -28,7 +28,7 @@ jobs:
             --template-file bicep/rg/resource-group.bicep \
             --parameters @bicep/rg/rg-parameters.json
 
-      - name: Get Resource Group Name (Optional)
+      - name: Get Resource Group Name 
         id: get-rg-name
         run: |
           RG_NAME=$(jq -r .resourceGroupName bicep/rg/rg-parameters.json)
@@ -51,6 +51,7 @@ jobs:
       - name: Deploy Resources
         run: |
           az deployment group create \
+            --name vnetpeering
             --resource-group test-rg \
-            --template-file bicep/peering/main.bicep \
-            --parameters @bicep/peering/parameters.bicepparam
+            --parameters parameters.bicepparam
+            
