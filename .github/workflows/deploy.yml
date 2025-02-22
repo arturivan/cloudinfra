@@ -51,7 +51,8 @@ jobs:
       - name: Deploy Resources
         run: |
           az deployment group create \
-            --name vnetpeering
+            --name vnetpeering \
             --resource-group test-rg \
-            --parameters parameters.bicepparam
+            --template-file bicep/peering/main.bicep \
+            --parameters bicep/peering/parameters.bicepparam
             
