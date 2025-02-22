@@ -52,5 +52,5 @@ jobs:
         run: |
           az deployment group create \
             --resource-group test-rg \
-            --template-file peering/main.bicep \
-            --parameters @peering/parameters.bicepparam
+            --template-file bicep/peering/main.bicep \
+            --parameters @bicep/peering/parameters.bicepparam
