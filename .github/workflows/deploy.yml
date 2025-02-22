@@ -1,0 +1,50 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-rg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: Azure/login@v2.2.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Resource Group
+        run: |
+          az deployment sub create \
+          --location westeurope \
+          --template-file bicep/rg/resource-group.bicep \
+          --parameters @bicep/rg/rg-parameters.json
+
+  deploy-infra:
+    name: Deploy Bicep
+    runs-on: ubuntu-latest
+    needs: deploy-rg # Ensures RG is created first
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: Azure/login@v2.2.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Resources
+        run: |
+          az deployment group create \
+            --resource-group test-rg \
+            --template-file peering/main.bicep \
+            --parameters @test/parameters.json
