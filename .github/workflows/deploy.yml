@@ -7,7 +7,6 @@ on:
   workflow_dispatch: # Allow manual trigger
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -25,9 +24,16 @@ jobs:
       - name: Deploy Resource Group
         run: |
           az deployment sub create \
-          --location westeurope \
-          --template-file bicep/rg/resource-group.bicep \
-          --parameters @bicep/rg/rg-parameters.json
+            --location westeurope \
+            --template-file bicep/rg/resource-group.bicep \
+            --parameters @bicep/rg/rg-parameters.json
+
+      - name: Get Resource Group Name (Optional)
+        id: get-rg-name
+        run: |
+          RG_NAME=$(jq -r .resourceGroupName bicep/rg/rg-parameters.json)
+          echo "Resource Group Name: $RG_NAME"
+          echo "::set-output name=rg_name::$RG_NAME"
 
   deploy-infra:
     name: Deploy Bicep
@@ -47,4 +53,4 @@ jobs:
           az deployment group create \
             --resource-group test-rg \
             --template-file peering/main.bicep \
-            --parameters @test/parameters.json
+            --parameters @peering/parameters.bicepparam
