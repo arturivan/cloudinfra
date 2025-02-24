@@ -26,6 +26,9 @@ jobs:
           framework: "bicep"
         continue-on-error: true # Ensures the workflow continues even if Checkov fails
         id: checkov_bicep
+
+      - name: Install Checkov
+        run: pip3 install checkov
       
       - name: Save Checkov Logs for Bicep
         run: checkov --directory bicep --framework bicep --output cli > checkov_bicep.log
