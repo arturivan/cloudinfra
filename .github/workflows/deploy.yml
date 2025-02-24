@@ -13,12 +13,9 @@ on:
       - "images/**" # Exclude
 
 jobs:
-  deploy-rg:
+  security-scanning:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Run Checkov Security Scan
         uses: bridgecrewio/checkov-action@v12
         with:
@@ -29,7 +26,7 @@ jobs:
 
       - name: Install Checkov
         run: pip3 install checkov
-      
+    
       - name: Save Checkov Logs for Bicep
         run: checkov --directory bicep --framework bicep --output cli > checkov_bicep.log
 
@@ -38,6 +35,12 @@ jobs:
         with:
           name: checkov-bicep-logs
           path: checkov_bicep.log
+   
+  deploy-rg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Login to Azure
         uses: Azure/login@v2.2.0
