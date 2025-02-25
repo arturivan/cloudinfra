@@ -5,7 +5,7 @@ variable "location" {
 
 variable "naming_prefix" {
   type    = string
-  default = "techies"
+  default = "techie"
 }
 
 variable "tag_environment" {
