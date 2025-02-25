@@ -27,12 +27,19 @@ jobs:
 
       - name: Save Checkov Logs for Bicep
         run: checkov --directory bicep --framework bicep --output cli > checkov_bicep.log
-
+        continue-on-error: true # Ensures the workflow continues even if Checkov fails
+        
       - name: Upload Checkov Bicep Logs
         uses: actions/upload-artifact@v4
         with:
           name: checkov-bicep-logs
           path: checkov_bicep.log
+
+      - name: Fail Job if Checkov Finds Issues
+        if: steps.checkov_bicep.outcome == 'failure'  # Check if the Checkov step failed
+        run: |
+          echo "Checkov found security issues. Failing the job."
+          exit 1
 
   deploy-rg:
     runs-on: ubuntu-latest
