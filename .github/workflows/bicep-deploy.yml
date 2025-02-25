@@ -11,6 +11,9 @@ jobs:
   security-scanning:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Run Checkov Security Scan
         uses: bridgecrewio/checkov-action@v12
         with:
