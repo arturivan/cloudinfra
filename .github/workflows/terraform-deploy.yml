@@ -35,10 +35,15 @@ jobs:
           name: checkov-terraform-logs
           path: checkov_terraform.log
 
+      - name: Fail Job if Checkov Finds Issues
+        if: steps.checkov_terraform.outcome == 'failure'  # Check if the Checkov step failed
+        run: |
+          echo "Checkov found security issues. Failing the job."
+          exit 1
+
   deploy-terraform:
     runs-on: ubuntu-latest
     needs: security-scanning
-    if: needs.security-scanning.result == 'success'  # Only run if the security-scanning job succeeds
     defaults:
         run:
             shell: bash
