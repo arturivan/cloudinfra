@@ -33,6 +33,7 @@ jobs:
 
   deploy-terraform:
     runs-on: ubuntu-latest
+    needs: security-scanning
     defaults:
         run:
             shell: bash
