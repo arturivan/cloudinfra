@@ -1,12 +1,11 @@
 name: Deploy Terraform
 
 on:
-  push:
-    paths:
-      - "terraform/**"
-    paths-ignore:
-    - "images/**"
-  workflow_dispatch:
+    push:
+      branches:
+        - main
+      paths:
+        - 'terraform/**'
 
 jobs:
   security-scanning:

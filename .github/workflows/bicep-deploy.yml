@@ -2,11 +2,10 @@ name: Deploy Bicep
 
 on:
   push:
+    branches:
+      - main
     paths:
-      - "bicep/**"
-    paths-ignore: 
-      - "images/**"
-  workflow_dispatch:
+      - 'bicep/**'
 
 jobs:
   security-scanning:
