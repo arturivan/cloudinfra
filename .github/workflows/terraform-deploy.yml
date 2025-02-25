@@ -1,0 +1,68 @@
+name: Deploy Terraform
+
+on:
+  push:
+    paths:
+      - "terraform/**"
+    paths-ignore:
+    - "images/**"
+  workflow_dispatch:
+
+jobs:
+  security-scanning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Checkov Security Scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: "terraform"
+          framework: "terraform"
+        continue-on-error: true # Ensures the workflow continues even if Checkov fails
+        id: checkov_terraform
+
+      - name: Install Checkov
+        run: pip3 install checkov
+
+      - name: Save Checkov Logs for terraform
+        run: checkov --directory terraform --framework terraform --output cli > checkov_terraform.log
+
+      - name: Upload Checkov terraform Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-terraform-logs
+          path: checkov_terraform.log
+
+  deploy-terraform:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+            shell: bash
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
+      STORAGE_ACCOUNT: ${{ secrets.STORAGE_ACCOUNT }}
+      CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP"
+        working-directory: terraform
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        working-directory: terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform

@@ -1,16 +1,12 @@
-name: Deploy Infrastructure
+name: Deploy Bicep
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - "images/**" # Exclude
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "images/**" # Exclude
+    paths:
+      - "bicep/**"
+    paths-ignore: 
+      - "images/**"
+  workflow_dispatch:
 
 jobs:
   security-scanning:
@@ -26,7 +22,7 @@ jobs:
 
       - name: Install Checkov
         run: pip3 install checkov
-    
+
       - name: Save Checkov Logs for Bicep
         run: checkov --directory bicep --framework bicep --output cli > checkov_bicep.log
 
@@ -35,7 +31,7 @@ jobs:
         with:
           name: checkov-bicep-logs
           path: checkov_bicep.log
-   
+
   deploy-rg:
     runs-on: ubuntu-latest
     needs: security-scanning
