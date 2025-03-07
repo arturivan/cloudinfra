@@ -8,7 +8,7 @@ resource "random_integer" "name_suffix" {
 }
 
 resource "azurerm_storage_account" "example" {
-  name                     = local.torage_account_name
+  name                     = local.storage_account_name
   resource_group_name      = techies-37395
   location                 = var.location
   account_tier             = "Standard"
