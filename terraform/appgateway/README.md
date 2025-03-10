@@ -10,4 +10,8 @@ Multiple Virtual Machines – Two VMs are deployed, but the configuration allows
 - Dynamic Resource Naming – Using Terraform's random string and variable-based configurations ensures flexibility for scaling deployments.
 - Infrastructure as Code (IaC) – Enables quick modifications and redeployments without manual intervention.
 
-![Azure](images/scr0603.png)
+#
+
+![Azure](/images/scr0603.png)
+![Azure](/images/scr175210.png)
+![Azure](/images/scr175457.png)
